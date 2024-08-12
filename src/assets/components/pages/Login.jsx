@@ -1,22 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Login = () => {    return (
+const Login = () => {
+  const [username, setUsername] = useState(""); // Changer email en username
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Logique de validation fictive
+    if (username === "testuser" && password === "password") {
+      setSuccess("Login Successful!");
+      setError("");
+    } else {
+      setError("Invalid username or password.");
+      setSuccess("");
+    }
+  };
+
+  return (
     <main className="main bg-dark">
       <section className="sign-in-content">
         <i className="fa fa-user-circle sign-in-icon"></i>
         <h1>Sign In</h1>
 
         {error && <p className="error-message">{error}</p>}
-        {success && <p className="success-message">Login Successful!</p>}
+        {success && <p className="success-message">{success}</p>}
         
         <form onSubmit={handleSubmit}>
           <div className="input-wrapper">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="username">Username</label> 
             <input 
-              type="email" 
-              id="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
+              type="text"  
+              id="username"  
+              value={username}  
+              onChange={(e) => setUsername(e.target.value)}  
               required 
             />
           </div>
@@ -39,14 +59,11 @@ const Login = () => {    return (
             />
             <label htmlFor="remember-me">Remember me</label>
           </div>
-          {/* <!-- PLACEHOLDER DUE TO STATIC SITE -->
-          <a href="./user.html" class="sign-in-button">Sign In</a>
-          <!-- SHOULD BE THE BUTTON BELOW -->
-          <!-- <button class="sign-in-button">Sign In</button> -->
-          <!--  --> */}
+          <button className="sign-in-button">Sign In</button>
         </form>
       </section>
     </main>
   );
-}
+};
+
 export default Login;

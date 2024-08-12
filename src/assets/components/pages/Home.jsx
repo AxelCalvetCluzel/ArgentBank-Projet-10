@@ -2,12 +2,11 @@ import React from "react";
 import chat from "../../images/icon-chat.png";
 import money from "../../images/icon-money.png";
 import security from "../../images/icon-security.png";
-import Footer from "../Footer";
-import Header from "../Header";
+
+
 const Home = () => {
   return (
     <div>
-      <Header />
       <div className="hero">
         <section className="hero-content">
           <h2 className="sr-only">Promoted Content</h2>
@@ -45,7 +44,6 @@ const Home = () => {
           </p>
         </div>
       </section>
-      <Footer />
     </div>
   );
 };
