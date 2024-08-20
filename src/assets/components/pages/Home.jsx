@@ -3,7 +3,6 @@ import chat from "../../images/icon-chat.png";
 import money from "../../images/icon-money.png";
 import security from "../../images/icon-security.png";
 
-
 const Home = () => {
   return (
     <div>

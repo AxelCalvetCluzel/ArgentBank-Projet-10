@@ -1,22 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
-  const [username, setUsername] = useState(""); // Changer email en username
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
     
-    // Logique de validation fictive
-    if (username === "testuser" && password === "password") {
-      setSuccess("Login Successful!");
-      setError("");
-    } else {
-      setError("Invalid username or password.");
-      setSuccess("");
+    try {
+      const response = await axios.post('http://localhost:3001/api-docs/', {
+        email,
+        password,
+      });
+
+      // Si la connexion est réussie
+      setSuccess(true);
+      setLoading(false);
+
+      // Sauvegarder le token ou l'utilisateur dans le localStorage (facultatif)
+      localStorage.setItem('token', response.data.token);
+
+      // Rediriger l'utilisateur vers la page /user
+      navigate('/user');
+      
+    } catch (err) {
+      setLoading(false);
+      setError('Invalid email or password. Please try again.');
     }
   };
 
@@ -27,16 +44,16 @@ const Login = () => {
         <h1>Sign In</h1>
 
         {error && <p className="error-message">{error}</p>}
-        {success && <p className="success-message">{success}</p>}
+        {success && <p className="success-message">Login Successful!</p>}
         
         <form onSubmit={handleSubmit}>
           <div className="input-wrapper">
-            <label htmlFor="username">Username</label> 
+            <label htmlFor="email">Email</label>
             <input 
-              type="text"  
-              id="username"  
-              value={username}  
-              onChange={(e) => setUsername(e.target.value)}  
+              type="email" 
+              id="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
               required 
             />
           </div>
@@ -54,12 +71,16 @@ const Login = () => {
             <input 
               type="checkbox" 
               id="remember-me" 
-              checked={rememberMe} 
-              onChange={(e) => setRememberMe(e.target.checked)} 
             />
             <label htmlFor="remember-me">Remember me</label>
           </div>
-          <button className="sign-in-button">Sign In</button>
+          <button 
+            type="submit"
+            className="sign-in-button"
+            disabled={loading}
+          >
+            {loading ? 'Signing In...' : 'Sign In'}
+          </button>
         </form>
       </section>
     </main>
