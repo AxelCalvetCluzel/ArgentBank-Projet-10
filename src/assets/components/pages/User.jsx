@@ -3,7 +3,7 @@ import AccountSection from '../AccountSection';
 import Header from '../Header';  
 
 const UserPage = () => {
-  // Récupérer le nom depuis le localStorage ou utiliser une valeur par défaut
+  // Récupérer le nom depuis le localStorage 
   const [nom, setNom] = useState(() => {
     return localStorage.getItem('nomUtilisateur') || 'Tony Jarvis';
   });
@@ -35,7 +35,7 @@ const UserPage = () => {
   // Gestion de l'annulation de l'édition
   const gererAnnulation = () => {
     setEnEdition(false);
-    setNouveauNom(nom); // Réinitialiser la valeur du champ de saisie
+    setNouveauNom(nom); 
   };
 
   // Extraire le prénom du nom complet
