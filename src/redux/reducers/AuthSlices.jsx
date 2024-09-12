@@ -4,7 +4,6 @@ import axios from 'axios';
 
 const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
 
-// Initial state
 const initialState = {
   userInfo: JSON.parse(localStorage.getItem('userInfo')) || null,
   userToken: localStorage.getItem('userToken') || null,
@@ -13,7 +12,6 @@ const initialState = {
   success: false,
 };
 
-// Actions asynchrones
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }, { rejectWithValue }) => {
@@ -34,7 +32,7 @@ export const loginUser = createAsyncThunk(
       );
 
       localStorage.setItem('userInfo', JSON.stringify(userInfoResponse.data.body));
-      
+
       return {
         token,
         userInfo: userInfoResponse.data.body
@@ -62,15 +60,14 @@ export const updateUserProfile = createAsyncThunk(
       );
 
       localStorage.setItem('userInfo', JSON.stringify(response.data.body));
-      
+
       return response.data.body;
-      
+
     } catch (error) {
       return rejectWithValue(error.response?.data.message || error.message);
     }
   }
 );
-
 
 export const getUserProfile = createAsyncThunk(
   'auth/getUserProfile',
@@ -96,7 +93,6 @@ export const getUserProfile = createAsyncThunk(
   }
 );
 
-// Créer le slice auth
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -105,7 +101,7 @@ const authSlice = createSlice({
       state.userInfo = null;
       state.userToken = null;
       localStorage.removeItem('userToken');
-      localStorage.removeItem('userInfo'); 
+      localStorage.removeItem('userInfo');
     },
   },
   extraReducers: (builder) => {
@@ -122,6 +118,8 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userInfo');
       })
       .addCase(getUserProfile.pending, (state) => {
         state.loading = true;
@@ -134,6 +132,8 @@ const authSlice = createSlice({
       .addCase(getUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.userToken = null;
+        localStorage.removeItem('userToken');
       })
       .addCase(updateUserProfile.pending, (state) => {
         state.loading = true;
@@ -150,12 +150,10 @@ const authSlice = createSlice({
   },
 });
 
-// Sélecteurs
+export const { logoutUser } = authSlice.actions;
 export const selectUserInfo = (state) => state.auth.userInfo;
 export const selectIsAuth = (state) => !!state.auth.userToken;
 export const selectIsLoading = (state) => state.auth.loading;
 export const selectError = (state) => state.auth.error;
-
-export const { logoutUser } = authSlice.actions;
 
 export default authSlice.reducer;

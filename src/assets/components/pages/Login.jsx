@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { loginUser, selectIsAuth, selectIsLoading, selectError } from "../../../redux/reducers/AuthSlices";
@@ -15,15 +14,21 @@ const Login = () => {
   const error = useSelector(selectError);
   const isAuth = useSelector(selectIsAuth);
 
+  
+  useEffect(() => {
+    if (isAuth) {
+      const from = location.state?.from?.pathname || "/user";
+      navigate(from, { replace: true });
+    }
+  }, [isAuth, navigate, location.state?.from?.pathname]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await dispatch(loginUser({ email, password })).unwrap();
-      if (isAuth) {
-        const from = location.state?.from?.pathname || "/user";
-        navigate(from, { replace: true });
-      }
-    } catch (err) {}
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
   };
 
   return (

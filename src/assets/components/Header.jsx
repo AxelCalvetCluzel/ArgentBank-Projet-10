@@ -1,8 +1,9 @@
+
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import argentBankLogo from "../images/argentBankLogo.png";
 
-const Header = ({ firstName }) => {
+const Header = ({ firstName, handleLogout }) => {
   const location = useLocation();
   const isUserPage = location.pathname === "/user";
 
@@ -23,7 +24,7 @@ const Header = ({ firstName }) => {
               <span className="user-name">
                 <i className="fa fa-user-circle"></i> {firstName}
               </span>
-              <NavLink className="main-nav-item" to="/logout">
+              <NavLink className="main-nav-item" onClick={handleLogout}>
                 <i className="fa fa-sign-out"></i>
                 Sign Out
               </NavLink>
@@ -41,3 +42,4 @@ const Header = ({ firstName }) => {
 };
 
 export default Header;
+

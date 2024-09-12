@@ -1,15 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUserProfile, getUserProfile } from '../../../redux/reducers/AuthSlices';
+import { updateUserProfile, getUserProfile, logoutUser } from '../../../redux/reducers/AuthSlices';
 import AccountSection from '../AccountSection';
 import Header from '../Header';
+import { useNavigate } from 'react-router-dom';
 
 const UserPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const userInfo = useSelector((state) => state.auth.userInfo);
 
-  // Charger le nom depuis localStorage ou utiliser une valeur par défaut
   const [nom, setNom] = useState(() => {
     const storedName = localStorage.getItem('nomUtilisateur');
     return userInfo?.userName || storedName || 'Tony Jarvis'; 
@@ -18,53 +19,52 @@ const UserPage = () => {
   const [enEdition, setEnEdition] = useState(false);
   const [nouveauNom, setNouveauNom] = useState(nom);
 
-  // Récupérer le profil utilisateur lors du montage
   useEffect(() => {
     if (!userInfo) {
       dispatch(getUserProfile());
     }
   }, [dispatch, userInfo]);
 
-  // Mettre à jour le nom dans localStorage lorsque nom change
   useEffect(() => {
     if (nom) {
       localStorage.setItem('nomUtilisateur', nom);
     }
   }, [nom]);
 
-  // Gestion de la soumission pour mettre à jour le nom
   const gererSoumissionFormulaire = (e) => {
     e.preventDefault();
     setNom(nouveauNom);
     setEnEdition(false);
 
-    // Mise à jour via l'API
     dispatch(updateUserProfile({ userName: nouveauNom })) 
       .unwrap()
       .then(() => {
+        console.log('Profile updated successfully');
       })
       .catch((error) => {
         console.error('Failed to update profile:', error);
       });
   };
 
-  // Gestion du champ de saisie du nom
   const gererChangementSaisie = (e) => {
     setNouveauNom(e.target.value);
   };
 
-  // Annuler la modification
   const gererAnnulation = () => {
     setEnEdition(false);
     setNouveauNom(nom);
   };
 
-  // Extraire le prénom à partir du nom
   const prenom = nom?.split(' ')[0] || 'Tony';
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    navigate('/login'); 
+  };
 
   return (
     <>
-      <Header firstName={prenom} />
+      <Header firstName={prenom} handleLogout={handleLogout} />
       <main className="main bg-dark">
         <div className="header">
           {enEdition ? (
