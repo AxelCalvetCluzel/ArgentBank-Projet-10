@@ -58,7 +58,7 @@ export const getUserProfile = createAsyncThunk(
   }
 );
 
-// Action pour mettre à jour les informations utilisateur
+// Action pour mettre à jour les informations utilisateur !
 export const updateUserProfile = createAsyncThunk(
   'auth/updateUserProfile',
   async (userData, { rejectWithValue, getState }) => {
