@@ -3,10 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import argentBankLogo from "../images/argentBankLogo.png";
 
 const Header = ({ firstName }) => {
-  // Utiliser useLocation pour obtenir l'URL actuelle
   const location = useLocation();
-
-  // Vérifier si l'utilisateur est sur la page User
   const isUserPage = location.pathname === "/user";
 
   return (

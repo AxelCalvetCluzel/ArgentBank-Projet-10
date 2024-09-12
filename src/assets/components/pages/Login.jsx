@@ -1,17 +1,14 @@
+
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import {
-  loginUser,
-  selectIsAuth,
-  selectIsLoading,
-  selectError,
-} from "../../../redux/reducers/AuthSlices"; 
+import { useNavigate, useLocation } from "react-router-dom";
+import { loginUser, selectIsAuth, selectIsLoading, selectError } from "../../../redux/reducers/AuthSlices";
 import Header from "../Header";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const loading = useSelector(selectIsLoading);
@@ -23,7 +20,8 @@ const Login = () => {
     try {
       await dispatch(loginUser({ email, password })).unwrap();
       if (isAuth) {
-        navigate("/user");
+        const from = location.state?.from?.pathname || "/user";
+        navigate(from, { replace: true });
       }
     } catch (err) {}
   };

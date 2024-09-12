@@ -1,49 +1,70 @@
+
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUserProfile, getUserProfile } from '../../../redux/reducers/AuthSlices';
 import AccountSection from '../AccountSection';
-import Header from '../Header';  
+import Header from '../Header';
 
 const UserPage = () => {
-  // Récupérer le nom depuis le localStorage 
+  const dispatch = useDispatch();
+  const userInfo = useSelector((state) => state.auth.userInfo);
+
+  // Charger le nom depuis localStorage ou utiliser une valeur par défaut
   const [nom, setNom] = useState(() => {
-    return localStorage.getItem('nomUtilisateur') || 'Tony Jarvis';
+    const storedName = localStorage.getItem('nomUtilisateur');
+    return userInfo?.userName || storedName || 'Tony Jarvis'; 
   });
+
   const [enEdition, setEnEdition] = useState(false);
   const [nouveauNom, setNouveauNom] = useState(nom);
 
-  // Mettre à jour le localStorage lorsque le nom change
+  // Récupérer le profil utilisateur lors du montage
   useEffect(() => {
-    localStorage.setItem('nomUtilisateur', nom);
+    if (!userInfo) {
+      dispatch(getUserProfile());
+    }
+  }, [dispatch, userInfo]);
+
+  // Mettre à jour le nom dans localStorage lorsque nom change
+  useEffect(() => {
+    if (nom) {
+      localStorage.setItem('nomUtilisateur', nom);
+    }
   }, [nom]);
 
-  // Gestion bouton "Modifier"
-  const gererClicEdition = () => {
-    setEnEdition(true);
-  };
-
-  // Gestion de la soumission du formulaire
+  // Gestion de la soumission pour mettre à jour le nom
   const gererSoumissionFormulaire = (e) => {
     e.preventDefault();
     setNom(nouveauNom);
     setEnEdition(false);
+
+    // Mise à jour via l'API
+    dispatch(updateUserProfile({ userName: nouveauNom })) 
+      .unwrap()
+      .then(() => {
+      })
+      .catch((error) => {
+        console.error('Failed to update profile:', error);
+      });
   };
 
-  // Gestion des changements dans le champ de saisie
+  // Gestion du champ de saisie du nom
   const gererChangementSaisie = (e) => {
     setNouveauNom(e.target.value);
   };
 
-  // Gestion de l'annulation de l'édition
+  // Annuler la modification
   const gererAnnulation = () => {
     setEnEdition(false);
-    setNouveauNom(nom); 
+    setNouveauNom(nom);
   };
 
-  // Extraire le prénom du nom complet
-  const prenom = nom.split(' ')[0];
+  // Extraire le prénom à partir du nom
+  const prenom = nom?.split(' ')[0] || 'Tony';
 
   return (
     <>
-      <Header firstName={prenom} /> 
+      <Header firstName={prenom} />
       <main className="main bg-dark">
         <div className="header">
           {enEdition ? (
@@ -63,7 +84,7 @@ const UserPage = () => {
           ) : (
             <>
               <h1>Welcome back<br />{nom} !</h1>
-              <button className="edit-button" onClick={gererClicEdition}>Edit Name</button>
+              <button className="edit-button" onClick={() => setEnEdition(true)}>Edit Name</button>
             </>
           )}
         </div>

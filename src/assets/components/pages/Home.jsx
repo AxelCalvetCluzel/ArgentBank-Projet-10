@@ -1,4 +1,4 @@
-// src/pages/Home.js
+
 import React from "react";
 import chat from "../../images/icon-chat.png";
 import money from "../../images/icon-money.png";
